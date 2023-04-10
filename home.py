@@ -43,4 +43,7 @@ def generate():
     
     except Exception as e:
         return render_template('error.html')
-        
+    
+    
+if __name__ == '__main__':
+    app.run(debug=False, host='0.0.0.0')
