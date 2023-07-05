@@ -1,28 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <!-- Meta tags -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 </head>
 <body>
-    <div class="container mt-3">
+  <div class="container mt-3">
+      <center>
+          <h1 class="m-4">Data-101</h1>
+          <h3 class="m-3">Question/Answer generator system</h3>
+          <br>
+          <hr>
+          <br>
+              
+          <h3>Upload a new dataset</h3>
+          <br>
+          <form method="POST" action="/upload" enctype="multipart/form-data" id="uploadForm">
+            <h5>
+              Choose a dataset : <input type="file" name="datasetFile" id="datasetFile" accept=".csv" /> 
+              <button class="btn btn-primary mb-3" type="submit">Upload</button>
+            </h5>
+          </form>
 
-        <center>
-            <h2 class="m-5">Data-101</h2>
-            <h3 class="m-5">Q/A generator system</h3>
+          <form action="/column-selection" method="post">
+            <!-- Dropdown for selecting column type -->
+            <table>
+              <thead>
+                <tr>
+                  <th>Column Name -</th>
+                  <th> - Data Type</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+              </tbody>
+            </table>
+            
+            Choose Catgeroical/Numerical/Ignore columns from above and
+            <button class="btn btn-primary m-3" type="submit">Submit choices</button>
+          </form>
 
-            <form action="/generate" method="post">
-                <div class="mb-3">
-                    <input type="number" placeholder="Enter no of questions to be generated" min="1" name="no_questions" id="no_questions" class="form-control" aria-label="no_questions" aria-describedby="no_questions">
-                </div>
-                <input type="submit" class="btn btn-primary">
-            </form>
-        </center>
-        </div>
+          <br>
+          <br>
+          OR
+          <br>
+          <br>
+
+          <h6> URL's for common datasets used in this class(to download datasets) :
+            <!-- Copy buttons for common datasets -->
+            <button class="btn btn-secondary mb-3" id="copyButton">Moody</button>
+            <button class="btn btn-secondary mb-3" id="copyButton">Moody - 1</button>
+            <button class="btn btn-secondary mb-3" id="copyButton">Moody - 2</button>
+            <button class="btn btn-secondary mb-3" id="copyButton">Moody - 3</button>
+            <button class="btn btn-secondary mb-3" id="copyButton">Moody - 4</button>
+          </h6>
+
+          <script>
+            document.getElementById("uploadForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            var fileInput = document.getElementById("datasetFile");
+            var file = fileInput.files[0];
+
+            if (file) {
+              var formData = new FormData();
+              formData.append("datasetFile", file);
+
+              fetch("/upload", {
+                method: "POST",
+                body: formData
+              })
+              .then(response => response.json())
+              .then(data => {
+                var columnNames = data.column_names;
+                // populateDropdown(columnNames);
+                createTable(columnNames)
+              })
+              .catch(error => console.error("Error:", error));
+            } else {
+              alert("Please select a file.");
+            }
+            });
+
+            function populateDropdown(columnNames) {
+              var select = document.getElementById("columnSelect");
+
+              // Clear existing options
+              select.innerHTML = "";
+
+              // Add new options for each column name
+              columnNames.forEach(function(column) {
+                var option = document.createElement("option");
+                option.text = column;
+                option.value = column;
+                select.add(option);
+              });
+            }
+
+            function createTable(data) {
+                var tableBody = document.getElementById("tableBody");
+
+                // Clear table body
+                tableBody.innerHTML = "";
+
+                // Create table rows
+                data.forEach(function(row) {
+                  var tr = document.createElement("tr"); 
+                  tr.setAttribute("id", row);
+                  
+                  // Create column name cell
+                  var columnNameTd = document.createElement("td");
+                  columnNameTd.textContent = row;
+                  tr.appendChild(columnNameTd);
+
+                  // Create data type dropdown cell
+                  var dataTypeTd = document.createElement("td");
+                  var dropdown = createDropdown();
+                  dropdown.setAttribute("name", row);
+                  dataTypeTd.appendChild(dropdown);
+                  tr.appendChild(dataTypeTd);
+
+                  // Append row to table body
+                  tableBody.appendChild(tr);
+                });
+              }
+
+              function createDropdown() {
+                var dropdown = document.createElement("select");
+                dropdown.options.add(new Option("Categorical", "categorical"));
+                dropdown.options.add(new Option("Numerical", "numerical"));
+                dropdown.options.add(new Option("Ignore", "ignore"));
+                return dropdown;
+              }
+
+              
+          </script>
+
+      </center>
+      
+  </div>
 
 </body>
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+<script>
+    // Copy Button Event Listener
+    document.getElementById("copyButton").addEventListener("click", function() {
+      var url = "https://example.com"; // Replace with your desired URL
+
+      // Copy the URL to the clipboard using the Clipboard API
+      navigator.clipboard.writeText(url).then(function() {
+        alert("URL copied to clipboard!");
+      }, function() {
+        alert("Failed to copy URL to clipboard!");
+      });
+    });
+
+    // Upload & Generate URL Button Event Listener
+    document.getElementById("uploadGenerateURLButton").addEventListener("click", function() {
+      var fileInput = document.getElementById("dataset_file");
+      var file = fileInput.files[0];
+
+      if (file) {
+        var reader = new FileReader();
+
+        // When the file is loaded, generate the URL based on the file name
+        reader.onload = function(e) {
+          var url = "https://example.com/datasets/" + encodeURIComponent(file.name);
+
+          // Use the generated URL as needed (e.g., display or process it)
+          console.log("Generated URL:", url);
+        };
+
+        // Read the file as a data URL
+        reader.readAsDataURL(file);
+      } else {
+        alert("Please select a file.");
+      }
+    });
+
+  </script>
 </html>

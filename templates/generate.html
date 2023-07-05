@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/generate" method="post">
+        <!-- Input for entering dataset URL -->
+        <!-- <div class="mb-3">
+            <input type="text" placeholder="Enter dataset URL" name="dataset_link" id="dataset_link" class="form-control" aria-label="dataset_link" aria-describedby="dataset_link">
+        </div> -->
+        <div class="mb-3">
+            <!-- Input for entering number of questions to generate -->
+            <input type="number" placeholder="Enter no of questions to be generated" min="1" name="no_questions" id="no_questions" class="form-control" aria-label="no_questions" aria-describedby="no_questions">
+        </div>
+        <!-- Submit button for generating questions -->
+        <input type="submit" class="btn btn-primary mt-3">
+    </form>
+</body>
+</html>
