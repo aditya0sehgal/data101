@@ -1,19 +1,20 @@
 from flask import Flask, render_template, request
 import pandas as pd
-import random, numpy, csv, io, os
+import random, numpy, csv, io, os, json
 
 app = Flask(__name__)
-
+column_cat = {}
 current_dataset_columns = []
 file_name = ""
+categorical_columns = []
+numerical_columns = []
+current_dataset = []
+Questions = pd.DataFrame(columns=["Type of question", "Question", "Answer", "Template code"])
+
 # Home landing page
 @app.route("/" , methods=['GET'])
 def home():
-    datta = {
-        'dropdown' : ["item1", "item2", "item3", "item4", "item5" ],
-        'updatedata' : ""
-    }
-    return render_template('home.html', data = datta)
+    return render_template('home.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -21,7 +22,7 @@ def upload():
     file = request.files['datasetFile']
     if file:
         destination_path = os.getcwd()  # Get the current working directory
-        file.save(os.path.join(destination_path, file.filename))
+        file.save(os.path.join(destination_path+'\datasets', file.filename))
         file_name = file.filename
         print(file_name)
         column_names = extract_column_names(file_name)
@@ -36,7 +37,7 @@ def upload():
 
 def extract_column_names(file):
     global current_dataset_columns
-    col_names = pd.read_csv(file).columns
+    col_names = pd.read_csv(os.path.join(os.getcwd() +'\datasets', file)).columns
     current_dataset_columns = col_names
     print(col_names)
     return col_names
@@ -45,10 +46,23 @@ def extract_column_names(file):
 @app.route('/column-selection', methods=['POST'])
 def selectCatNumIgnore():
     try:
-        global current_dataset_columns
-        # print(current_dataset_columns)
+        global current_dataset_columns, column_cat, categorical_columns, numerical_columns, Questions
+
+        data = {}
         for col in current_dataset_columns:
-            print(col, request.form.get(col))
+            data[col] = request.form.get(col)
+
+        column_cat = json.dumps(data)
+        print(column_cat, data)
+        
+        for key, value in data.items():
+            if value == "numerical": 
+                numerical_columns.append(key)
+            elif value == "categorical": 
+                categorical_columns.append(key)
+        print(column_cat)
+        print(categorical_columns)
+        print(numerical_columns)
         return render_template('generate.html')
 
     except Exception as e:
@@ -58,11 +72,13 @@ def selectCatNumIgnore():
 # Post call based on no of questions input
 @app.route('/generate', methods=['POST'])
 def generate():
+    global current_dataset, file_name
     try:
         no_of_questions = int(request.form['no_questions'])
         print("Questions : ", str(no_of_questions))
-        airbnb = pd.read_csv("https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/airbnb.csv")
-
+        current_dataset = pd.read_csv(os.path.join(os.getcwd() +'\datasets', file_name))
+        current_dataset = current_dataset.fillna(0)
+        
         aggregate_ops = ['min', 'max', 'count', 'avg', 'sum']
         categorical_attr = ['name', 'host_name', 'neighbourhood_group',	'neighbourhood', 'room_type']
         numerical_attr = airbnb.describe().columns[1:]
