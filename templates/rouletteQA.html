@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script type="text/javascript" src="//cdn.datacamp.com/dcl-react.js.gz"></script>
+    <script>
+        var curr_data = '{{data | tojson | safe}}'
+        curr_data = JSON.parse(curr_data)[0]
+        datasetlinkdict = { 
+                            "MOODY" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/moody2022_new.csv",
+                            "PARTY" : "https://raw.githubusercontent.com/paramshah4/data101_tutorial/main/files/dataset/party2023.csv",
+                            "VOTES" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/Voting1.csv",
+                            "MOVIES" : "https://raw.githubusercontent.com/paramshah4/data101_tutorial/main/files/dataset/Movies2022F-4-new.csv"
+                          }
+        let row = []
+        // Function to randomly select and display a question
+        function loadRandomQuestion() {
+            const randomIndex = Math.floor(Math.random() * curr_data.length);
+            row = curr_data[randomIndex];
+
+            document.getElementById('question').innerHTML = "<h2>Question: " + row[0] + "</h2>";
+            document.getElementById('ans-btn').style.display = ""
+            document.getElementById('code-btn').style.display = ""
+            // document.getElementById('code').style.display = "none"
+            document.getElementById('answer').style.display = "none"
+            document.getElementById('code').style.display = "none"
+        }
+        function getAnswer() {
+            document.getElementById('answer').innerHTML = "<h4>Answer: </h4><p>" + row[1] + "</p>";
+            document.getElementById('answer').style.display = ""
+            // document.getElementById('code').style.display = "none"
+        }
+        function getCode() {
+            datasetlink = `df <- read.csv("${datasetlinkdict[row[3].split(" ")[0]]}"); `
+            
+            row[2].split(";").forEach(element => {
+              // console.log(element);
+              if(element.trim() != "") {
+                datasetlink += "\n"
+                datasetlink += "\n"
+                datasetlink += element.trim()
+                datasetlink += ";"
+              }
+            });
+            // document.getElementById('code').innerHTML = "<h5>Code: </h5><p>" + datasetlink + "</p>";
+            // document.getElementById('code').style.display = ""
+            
+            maindiv = document.getElementById("maindiv")
+            maindiv.innerHTML = ""
+            maindiv.style.display="block";
+
+            let txt = ""
+            txt=txt+ '<div data-datacamp-exercise data-lang="r" data-show-run-button data-no-lazy-load data-height="500">'+
+              '<code data-type="pre-exercise-code"># no pec</code>'+
+              '<code data-type="sample-code">'+
+              `df <- read.csv("${datasetlinkdict[row[3].split(" ")[0]]}"); `+ '\n\n#Try your code below' +
+              '</code>'+
+              '<code data-type="solution">'+
+              datasetlink+
+              '</code>'+
+              '<code data-type="sct"> </code>'+
+            '</div>';
+            var childiv=document.createElement("div");
+            childiv.setAttribute("id","roulette");
+            childiv.innerHTML=txt;
+            maindiv.append(childiv);
+            DCL.init();
+            
+
+        }
+
+    </script>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+</head>
+<body >
+  <div class="container mt-3">
+        <center>
+          <h1 class="m-4">Data-101</h1>
+          <h3 class="m-3">Question-Answer Roulette</h3>
+          <hr>
+          <br>
+          <div id="question"></div>
+          <button class="btn btn-lg btn-primary" onclick="loadRandomQuestion()">Get a new question</button>
+          <br>
+          <br>
+          <div id="maindiv">
+            
+          </div>
+          <br>
+          <button class="btn btn-success" id="code-btn" style="display: none;" onclick="getCode()">Try this question</button>
+          <div id="code"></div>
+          <br>
+          <br>
+          <button class="btn btn-danger" id="ans-btn" style="display: none;" onclick="getAnswer()">Get answer for this question</button>
+          <div id="answer"></div>
+          <hr>
+
+        </center>
+    </div>
+</body>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+
+</html>

@@ -10,15 +10,41 @@
 <body>
     <div class="container mt-3">
         <center>
+            <h1>Choose Templates</h1>
             <form action="/generate" method="post">
-                <!-- Input for entering dataset URL -->
-                <!-- <div class="mb-3">
-                    <input type="text" placeholder="Enter dataset URL" name="dataset_link" id="dataset_link" class="form-control" aria-label="dataset_link" aria-describedby="dataset_link">
-                </div> -->
-                <h6>Add maybe column selection for multicolumn bcs we are considering 3-4 columns at a time?</h6>
-                <div class="mb-3">
+                <label>
+                    <input type="checkbox" name="General" id="General" value="General">
+                    General Questions
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" name="Bayesian" id="Bayesian" value="Bayesian">
+                    Bayesian Questions
+                </label>
+                <br>
+                <label> 
+                    <input type="checkbox" name="Hypothesis" id="Hypothesis" value="Hypothesis">
+                    Hypothesis Questions (not yet live)
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" name="Distribution" id="Distribution" value="Distribution">
+                    Distribution Questions (not yet live)
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" name="Probability" id="Probability" value="Probability">
+                    Probability Questions (not yet live)
+                </label>
+                <br>
+                
+                <div class="m-3">
                     <!-- Input for entering number of questions to generate -->
                     <input type="number" placeholder="Enter no of questions to be generated" min="1" name="no_questions" id="no_questions" class="form-control" aria-label="no_questions" aria-describedby="no_questions">
+                </div>
+                <div class="m-3">
+                    <!-- Input for entering number of questions to generate -->
+                    <input type="text" placeholder="Enter name of dataset (Name appears in the question also)" name="dataset_name" id="dataset_name" class="form-control" aria-label="dataset_name" aria-describedby="dataset_name">
                 </div>
                 <!-- Submit button for generating questions -->
                 <input type="submit" class="btn btn-primary mt-3">
@@ -26,6 +52,7 @@
         </center>
     </div>
 </body>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 
 </html>

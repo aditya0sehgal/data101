@@ -15,12 +15,9 @@
       <center>
           <h1 class="m-4">Data-101</h1>
           <h3 class="m-3">Question/Answer generator system</h3>
-          <br>
           <hr>
-          <br>
-              
-          <h3>Upload a new dataset</h3>
-          <br>
+          <!-- add here link for the Roulette too -->
+          <h3>Upload a dataset</h3>
           <form method="POST" action="/upload" enctype="multipart/form-data" id="uploadForm">
             <h5>
               Choose a dataset : <input type="file" name="datasetFile" id="datasetFile" accept=".csv" /> 
@@ -31,35 +28,18 @@
           <form action="/column-selection" method="post">
             <!-- Dropdown for selecting column type -->
             <table>
-              <thead>
-                <tr>
-                  <th>Column Name -</th>
-                  <th> - Data Type</th>
-                </tr>
+              <thead id="tableHead">
               </thead>
               <tbody id="tableBody">
               </tbody>
             </table>
-            
-            Choose Catgeroical/Numerical/Ignore columns from above and
-            <button class="btn btn-primary m-3" type="submit">Submit choices</button>
+
+            <br>
+            <p id="colchoices" style="display: none;">
+              Choose column types from above and 
+              <button class="btn btn-sm btn-primary" type="submit">Submit choices</button>
+            </p>
           </form>
-
-          <br>
-          <br>
-          OR
-          <br>
-          <br>
-          <br>
-
-          <h6> URL's for common datasets used in this class(to download datasets) :
-            <!-- Copy buttons for common datasets -->
-            <button class="btn btn-secondary mb-3" id="copyButton">Moody</button>
-            <button class="btn btn-secondary mb-3" id="copyButton">Moody - 1</button>
-            <button class="btn btn-secondary mb-3" id="copyButton">Moody - 2</button>
-            <button class="btn btn-secondary mb-3" id="copyButton">Moody - 3</button>
-            <button class="btn btn-secondary mb-3" id="copyButton">Moody - 4</button>
-          </h6>
 
           <script>
             document.getElementById("uploadForm").addEventListener("submit", function(event) {
@@ -81,6 +61,8 @@
                 var columnNames = data.column_names;
                 // populateDropdown(columnNames);
                 createTable(columnNames)
+                document.getElementById("")
+                document.getElementById("colchoices").style.display = ""
               })
               .catch(error => console.error("Error:", error));
             } else {
@@ -90,10 +72,10 @@
 
             function populateDropdown(columnNames) {
               var select = document.getElementById("columnSelect");
-
+              
               // Clear existing options
               select.innerHTML = "";
-
+              
               // Add new options for each column name
               columnNames.forEach(function(column) {
                 var option = document.createElement("option");
@@ -104,10 +86,23 @@
             }
 
             function createTable(data) {
-                var tableBody = document.getElementById("tableBody");
+              var tableBody = document.getElementById("tableBody");
+              var tableHead = document.getElementById("tableHead");
 
-                // Clear table body
-                tableBody.innerHTML = "";
+              // Clear table body
+              tableBody.innerHTML = "";
+              
+              var tr = document.createElement("tr"); 
+              
+              // Create column name cell
+              var columnNameTh = document.createElement("th");
+              columnNameTh.textContent = "Column Name ";
+              tr.appendChild(columnNameTh);
+              var columnNameTh = document.createElement("th");
+              columnNameTh.textContent = "Data Type";
+              tr.appendChild(columnNameTh);
+              
+              tableHead.appendChild(tr);
 
                 // Create table rows
                 data.forEach(function(row) {
@@ -163,28 +158,6 @@
       });
     });
 
-    // Upload & Generate URL Button Event Listener
-    document.getElementById("uploadGenerateURLButton").addEventListener("click", function() {
-      var fileInput = document.getElementById("dataset_file");
-      var file = fileInput.files[0];
-
-      if (file) {
-        var reader = new FileReader();
-
-        // When the file is loaded, generate the URL based on the file name
-        reader.onload = function(e) {
-          var url = "https://example.com/datasets/" + encodeURIComponent(file.name);
-
-          // Use the generated URL as needed (e.g., display or process it)
-          console.log("Generated URL:", url);
-        };
-
-        // Read the file as a data URL
-        reader.readAsDataURL(file);
-      } else {
-        alert("Please select a file.");
-      }
-    });
 
   </script>
 </html>
