@@ -7,73 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
     <script type="text/javascript" src="//cdn.datacamp.com/dcl-react.js.gz"></script>
     <script>
-        var curr_data = '{{data | tojson | safe}}'
-        curr_data = JSON.parse(curr_data)[0]
-        datasetlinkdict = { 
-                            "MOODY" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/moody2022_new.csv",
-                            "PARTY" : "https://raw.githubusercontent.com/paramshah4/data101_tutorial/main/files/dataset/party2023.csv",
-                            "VOTES" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/Voting1.csv",
-                            "MOVIES" : "https://raw.githubusercontent.com/paramshah4/data101_tutorial/main/files/dataset/Movies2022F-4-new.csv"
-                          }
-        let row = []
-        // Function to randomly select and display a question
-        function loadRandomQuestion() {
-            const randomIndex = Math.floor(Math.random() * curr_data.length);
-            row = curr_data[randomIndex];
-
-            document.getElementById('question').innerHTML = "<h2>Question: " + row[0] + "</h2>";
-            document.getElementById('ans-btn').style.display = ""
-            document.getElementById('code-btn').style.display = ""
-            // document.getElementById('code').style.display = "none"
-            document.getElementById('answer').style.display = "none"
-            document.getElementById('code').style.display = "none"
-        }
-        function getAnswer() {
-            document.getElementById('answer').innerHTML = "<h4>Answer: </h4><p>" + row[1] + "</p>";
-            document.getElementById('answer').style.display = ""
-            // document.getElementById('code').style.display = "none"
-        }
-        function getCode() {
-            datasetlink = `df <- read.csv("${datasetlinkdict[row[3].split(" ")[0]]}"); `
-            
-            row[2].split(";").forEach(element => {
-              // console.log(element);
-              if(element.trim() != "") {
-                datasetlink += "\n"
-                datasetlink += "\n"
-                datasetlink += element.trim()
-                datasetlink += ";"
-              }
-            });
-            // document.getElementById('code').innerHTML = "<h5>Code: </h5><p>" + datasetlink + "</p>";
-            // document.getElementById('code').style.display = ""
-            
-            maindiv = document.getElementById("maindiv")
-            maindiv.innerHTML = ""
-            maindiv.style.display="block";
-
-            let txt = ""
-            txt=txt+ '<div data-datacamp-exercise data-lang="r" data-show-run-button data-no-lazy-load data-height="500">'+
-              '<code data-type="pre-exercise-code"># no pec</code>'+
-              '<code data-type="sample-code">'+
-              `df <- read.csv("${datasetlinkdict[row[3].split(" ")[0]]}"); `+ '\n\n#Try your code below' +
-              '</code>'+
-              '<code data-type="solution">'+
-              datasetlink+
-              '</code>'+
-              '<code data-type="sct"> </code>'+
-            '</div>';
-            var childiv=document.createElement("div");
-            childiv.setAttribute("id","roulette");
-            childiv.innerHTML=txt;
-            maindiv.append(childiv);
-            DCL.init();
-            
-
-        }
-
+      var curr_data = '{{data | tojson | safe}}'
+      curr_data = JSON.parse(curr_data)[0]
     </script>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
@@ -81,31 +20,213 @@
 <body >
   <div class="container mt-3">
         <center>
-          <h1 class="m-4">Data-101</h1>
-          <h3 class="m-3">Question-Answer Roulette</h3>
+          <h1 class="m-3">Data-101</h1>
+          <h3 class="m-2">Question-Answer Roulette</h3>
           <hr>
-          <br>
-          <div id="question"></div>
-          <button class="btn btn-lg btn-primary" onclick="loadRandomQuestion()">Get a new question</button>
-          <br>
-          <br>
-          <div id="maindiv">
-            
-          </div>
-          <br>
-          <button class="btn btn-success" id="code-btn" style="display: none;" onclick="getCode()">Try this question</button>
-          <div id="code"></div>
-          <br>
-          <br>
-          <button class="btn btn-danger" id="ans-btn" style="display: none;" onclick="getAnswer()">Get answer for this question</button>
-          <div id="answer"></div>
-          <hr>
-
         </center>
+
+        <div class="row">
+          <center>
+            <h6>Choose which topics you want to be tested on:</h6>
+            <form id="questionTypeForm">
+              <label>
+                <input type="checkbox" name="General Question" id="GeneralQuestion" value="General Question">
+                  General Questions
+              </label>
+              <label>
+                  <input type="checkbox" name="Bayesian Question" id="BayesianQuestion" value="Bayesian Question">
+                  Bayesian Questions
+              </label>
+              <label> 
+                  <input type="checkbox" name="Hypothesis Question" id="HypothesisQuestion" value="Hypothesis Question">
+                  Hypothesis Questions 
+              </label>
+              <label>
+                  <input type="checkbox" name="Distribution Question" id="DistributionQuestion" value="Distribution Question">
+                  Distribution Questions
+              </label>
+              <label>
+                  <input type="checkbox" name="Probability Question" id="ProbabilityQuestion" value="Probability Question">
+                  Probability Questions 
+              </label>
+              <br>
+              
+              <input type="submit" id="submitButton" class="btn btn-sm btn-dark mt-1">
+              <br>
+            </form>
+          </center>
+        </div>
+        <hr>
+
+        <div class="row">
+          <div style="border-right: 1.5px dashed rgb(199, 199, 199); border-left: 1.5px dashed rgb(199, 199, 199);"  id="qasection" class="col-md-4 col-sm-12">
+            <br>
+            <center>
+              <button class="btn btn-sm btn-primary" onclick="loadRandomQuestion()">Get a new question</button>
+
+              <button class="btn btn-sm btn-success" id="code-btn" style="display: none;" onclick="getCode()">Try coding this question</button>
+
+              <button class="btn btn-sm btn-danger" id="ans-btn" style="display: none;" onclick="getAnswer()">See answer</button>
+            </center>
+            <br>
+            <div id="question"></div>
+
+            <br>
+            <div id="answer"></div>
+
+          </div>
+          <div class="col-md-8 col-sm-12">
+            <div id="maindiv">
+
+            </div>
+          </div>
+        </div>
+        <div class="row">
+            <br>
+        </div>
     </div>
 </body>
+<script>
+  var questionlist = [];
+  var finalData = [];
+  var curr_data = '{{data | tojson | safe}}'
+  curr_data = JSON.parse(curr_data)[0]
+  finalData = curr_data
+  var flag = 0
+  const form = document.getElementById('questionTypeForm');
+  const submitButton = document.getElementById('submitButton');
+  // Add a click event listener to the submit button
+  submitButton.addEventListener('click', function (event) {
+      event.preventDefault()
+      flag = 1
+      finalData = []
+      questionlist = []
+      const GeneralQuestion = document.getElementById('GeneralQuestion');
+      const BayesianQuestion = document.getElementById('BayesianQuestion');
+      const HypothesisQuestion = document.getElementById('HypothesisQuestion');
+      const DistributionQuestion = document.getElementById('DistributionQuestion');
+      const ProbabilityQuestion = document.getElementById('ProbabilityQuestion');
+
+      if(flag == 1){
+        if(GeneralQuestion.checked){
+          questionlist.push(GeneralQuestion.value);
+          finalData = finalData.concat(curr_data.filter(elem => elem[4] == 'General Question'))
+        }
+        if(BayesianQuestion.checked){
+          questionlist.push(BayesianQuestion.value);
+          finalData = finalData.concat(curr_data.filter(elem => elem[4] == 'Bayesian Question'))
+        }
+        if(HypothesisQuestion.checked){
+          questionlist.push(HypothesisQuestion.value);
+          finalData = finalData.concat(curr_data.filter(elem => elem[4] == 'Hypothesis Question'))
+        }
+        if(DistributionQuestion.checked){
+          questionlist.push(DistributionQuestion.value);
+          finalData = finalData.concat(curr_data.filter(elem => elem[4] == 'Distribution Question'))
+        }
+        if(ProbabilityQuestion.checked){
+          questionlist.push(ProbabilityQuestion.value);
+          finalData = finalData.concat(curr_data.filter(elem => elem[4] == 'Probability Question'))
+        }
+        questionlist.length > 0 ? alert("Cool! You will be shown questions on " + JSON.stringify(questionlist.map(elem => elem+"s"))) : alert("Please select atleast 1 topic!")
+        finalData = questionlist.length > 0 ? finalData : curr_data    
+      }
+      else{
+        finalData = curr_data
+      } 
+    });
+
+    datasetlinkdict = {
+          "MOODY" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/moody2022_new.csv",
+          "PARTY" : "https://raw.githubusercontent.com/paramshah4/data101_tutorial/main/files/dataset/party2023.csv",
+          "VOTES" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/Voting1.csv",
+          "MOVIE" : "https://raw.githubusercontent.com/paramshah4/data101_tutorial/main/files/dataset/Movies2022F-4-new.csv",
+          "MARKET" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/HomeworkMarket2022.csv",
+          "SLEEP" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/SleepPrediction2.csv",
+          "CANVAS" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/Canvas1.csv",
+          "AIRBNB" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/airbnb.csv",
+          "TITANIC" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/Titanic-train.csv"
+        }
+    let row = []
+    // Function to randomly select and display a question
+    function loadRandomQuestion() {
+        const randomIndex = Math.floor(Math.random() * finalData.length);
+        row = finalData[randomIndex];
+
+        document.getElementById('question').innerHTML = "<h3><b>Question: </b></h3><h4>" + row[0] + "</h4>";
+        document.getElementById('ans-btn').style.display = ""
+        document.getElementById('code-btn').style.display = ""
+        // document.getElementById('code').style.display = "none"
+        document.getElementById('answer').style.display = "none"
+        document.getElementById('code').style.display = "none"
+    }
+    function getAnswer() {
+        document.getElementById('answer').innerHTML = "<h3><b>Answer: </b></h3><h4>" + row[1] + "</h4>";
+        document.getElementById('answer').style.display = ""
+        // document.getElementById('code').style.display = "none"
+    }
+    function getCode() {
+        datasetlink = `df <- read.csv("${datasetlinkdict[row[3].split(" ")[0]]}"); `
+
+        row[2].split(";").forEach(element => {
+          if(element.trim() != "") {
+            datasetlink += "\n"
+            datasetlink += "\n"
+            datasetlink += element.trim()
+            datasetlink += ";"
+          }
+        });
 
 
+        maindiv = document.getElementById("maindiv")
+        maindiv.innerHTML = ""
+        maindiv.style.display="block";
+        let precode = `permutation_test <- function(df1,c1,c2,n,w1,w2){
+            df <- as.data.frame(df1)
+            D_null<-c()
+            V1<-df[,c1]
+            V2<-df[,c2]
+            sub.value1 <- df[df[, c1] == w1, c2]
+            sub.value2 <- df[df[, c1] == w2, c2]
+            D <-  mean(sub.value2, na.rm=TRUE) - mean(sub.value1, na.rm=TRUE)
+            m=length(V1)
+            l=length(V1[V1==w2])
+            for(jj in 1:n){
+                null <- rep(w1,length(V1))
+                null[sample(m,l)] <- w2
+                nf <- data.frame(Key=null, Value=V2)
+                names(nf) <- c("Key","Value")
+                w1_null <- nf[nf$Key == w1,2]
+                w2_null <- nf[nf$Key == w2,2]
+                D_null <- c(D_null,mean(w2_null, na.rm=TRUE) - mean(w1_null, na.rm=TRUE))
+            }
+            myhist<-hist(D_null, prob=TRUE)
+            multiplier <- myhist$counts / myhist$density
+            mydensity <- density(D_null, adjust=2)
+            mydensity$y <- mydensity$y * multiplier[1]
+            plot(myhist)
+            lines(mydensity, col='blue')
+            abline(v=D, col='red')
+            M<-mean(D_null>D)
+            return(M)
+          }`
+        let txt = ""
+        txt=txt+ '<div data-datacamp-exercise data-lang="r" data-show-run-button data-no-lazy-load data-height="500">'+
+          '<code data-type="pre-exercise-code">'+precode+'</code>'+
+          '<code data-type="sample-code">'+
+          `df <- read.csv("${datasetlinkdict[row[3].split(" ")[0]]}"); `+ '\n\n#Try your code below' +
+          '</code>'+
+          '<code data-type="solution">'+
+          datasetlink+
+          '</code>'+
+          '<code data-type="sct"> </code>'+
+        '</div>';
+        var childiv=document.createElement("div");
+        childiv.setAttribute("id","roulette");
+        childiv.innerHTML=txt;
+        maindiv.append(childiv);
+        DCL.init();
+    }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
-
 </html>
