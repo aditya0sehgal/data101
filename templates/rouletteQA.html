@@ -16,12 +16,77 @@
     </script>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      datasetlinkdict = {
+        "MOODY" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/moody2022_new.csv",
+        "PARTY" : "https://raw.githubusercontent.com/paramshah4/data101_tutorial/main/files/dataset/party2023.csv",
+        "VOTES" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/Voting1.csv",
+        "MOVIE" : "https://raw.githubusercontent.com/paramshah4/data101_tutorial/main/files/dataset/Movies2022F-4-new.csv",
+        "MARKET" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/HomeworkMarket2022.csv",
+        "SLEEP" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/SleepPrediction2.csv",
+        "CANVAS" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/Canvas1.csv",
+        "AIRBNB" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/airbnb.csv",
+        "TITANIC" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/Titanic-train.csv"
+      }
+      // datasetlinkdict[row[3].split(" ")[0]]
+      const csvUrl = datasetlinkdict[window.location.pathname.split('/')[2].split("-")[0].toUpperCase()]; // Replace with your GitHub CSV link
+  
+      // Function to render the table
+      function renderTable(data) {
+          const tableHeader = document.getElementById('tableHeader');
+          const tableBody = document.getElementById('tableBody');
+  
+          // Clear previous content
+          tableHeader.innerHTML = '';
+          tableBody.innerHTML = '';
+  
+          // Display the header row
+          const headers = data[0];
+          headers.forEach(header => {
+              const th = document.createElement('th');
+              th.textContent = header;
+              tableHeader.appendChild(th);
+          });
+  
+          // Display a limited number of rows (for example, 5 rows)
+          const rowsToDisplay = 5;
+          for (let i = 1; i <= rowsToDisplay && i < data.length; i++) {
+              const row = data[i];
+              const tr = document.createElement('tr');
+              row.forEach(cell => {
+                  const td = document.createElement('td');
+                  td.textContent = cell;
+                  tr.appendChild(td);
+              });
+              tableBody.appendChild(tr);
+          }
+      }
+  
+      // Fetch and parse the CSV file using PapaParse
+      Papa.parse(csvUrl, {
+          download: true,
+          complete: function(results) {
+              renderTable(results.data);
+          },
+          header: false // Set to true if the first row of the CSV contains column headers
+      });
+  });
+  
+  </script>
 </head>
 <body >
   <div class="container mt-3">
         <center>
           <h1 class="m-3">Data-101</h1>
           <h3 class="m-2">Question-Answer Roulette</h3>
+          <table id="csvTable" class="table table-striped table-hover table-bordered">
+            <thead class="thead-dark">
+                <tr id="tableHeader"></tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
           <hr>
         </center>
 
@@ -136,17 +201,7 @@
       } 
     });
 
-    datasetlinkdict = {
-          "MOODY" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/moody2022_new.csv",
-          "PARTY" : "https://raw.githubusercontent.com/paramshah4/data101_tutorial/main/files/dataset/party2023.csv",
-          "VOTES" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/Voting1.csv",
-          "MOVIE" : "https://raw.githubusercontent.com/paramshah4/data101_tutorial/main/files/dataset/Movies2022F-4-new.csv",
-          "MARKET" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/HomeworkMarket2022.csv",
-          "SLEEP" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/SleepPrediction2.csv",
-          "CANVAS" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/Canvas1.csv",
-          "AIRBNB" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/airbnb.csv",
-          "TITANIC" : "https://raw.githubusercontent.com/dev7796/data101_tutorial/main/files/dataset/Titanic-train.csv"
-        }
+    
     let row = []
     // Function to randomly select and display a question
     function loadRandomQuestion() {
